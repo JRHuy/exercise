@@ -1,0 +1,14 @@
+{
+  "name": "ascenda-exercise",
+  "version": "1.0.0",
+  "description": "Take-home assignment from Ascenda",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tran Duc Huy",
+  "license": "ISC",
+  "dependencies": {
+    "moment": "^2.29.4"
+  }
+}
