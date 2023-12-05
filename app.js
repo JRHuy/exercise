@@ -1,17 +1,17 @@
 const fs = require('fs');
 const moment = require('moment');
 
+// const checkinDate = '2019-12-25';
 // get check-in date argument from the command line
 const checkinDate = process.argv[2];
-// const checkinDate = '2019-12-25';
 
 // load data from input.json
-// const data = JSON.parse(fs.readFileSync('input.json', 'utf8'));
 fs.readFile('input.json', 'utf8', (err, data) => {
     if (err) throw err;
 
     const offers = JSON.parse(data).offers;
 
+    // Only select offers with category that is Restaurant, Retail or Activity
     const categoryID = {
         'Restaurant': 1,
         'Retail': 2,
@@ -32,23 +32,26 @@ fs.readFile('input.json', 'utf8', (err, data) => {
         }
         return false;
     });
-    // only return 2 offers even though there are several eligible offers
+
+    // Only return 2 offers even though there are several eligible offers.
     // If there are multiple offers in the same category give priority to the closest merchant offer.
-    // If there are multiple offers with different categories, select the closest merchant offers when selecting 2 offers
+    // If there are multiple offers with different categories, select the closest merchant offers when selecting 2 offers.
+    // first sort offers by distance of the closest merchants, then select 2 offers in different categories
     eligibleOffers.sort((a, b) => a.merchants[0].distance - b.merchants[0].distance);
     finalOffers = [];
-    differentCategories = [];
+    differentCategories = new Set();
     for (let offer of eligibleOffers) {
-        if (!differentCategories.includes(offer.category)) {
+        if (!differentCategories.has(offer.category)) {
             finalOffers.push(offer);
-            differentCategories.push(offer.category);
+            differentCategories.add(offer.category);
         }
         if (finalOffers.length == 2) {
             break;
         }
     }
 
+    // print selected offers to output.json file
     fs.writeFile('output.json', JSON.stringify({ offers: finalOffers }, null, 2), err => {
         if (err) throw err;
-    })
-})
+    });
+});
